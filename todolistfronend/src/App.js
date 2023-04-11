@@ -3,6 +3,7 @@ import LoginForm from "./components/LoginForm/LoginForm";
 import { Routes, Route } from "react-router-dom";
 import SignUp from "./components/SignUp/SignUp";
 import TodoList from "./components/Todolist/TodoList";
+import "./components/Todolist/TodoList.css";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

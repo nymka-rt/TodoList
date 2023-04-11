@@ -1,55 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
+import TodoForm from './TodoForm';
+import Todo from './Todo';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCircleCheck, faPen, faTrashCan
-} from '@fortawesome/free-solid-svg-icons'
+function TodoList() {
+  const [todos, setTodos] = useState([]);
 
-const ToDo = ({ toDo, markDone, setUpdateData, deleteTask }) => {
-  return(
+  const addTodo = todo => {
+    if (!todo.text || /^\s*$/.test(todo.text)) {
+      return;
+    }
+
+    const newTodos = [todo, ...todos];
+
+    setTodos(newTodos);
+    console.log(...todos);
+  };
+
+  const updateTodo = (todoId, newValue) => {
+    if (!newValue.text || /^\s*$/.test(newValue.text)) {
+      return;
+    }
+
+    setTodos(prev => prev.map(item => (item.id === todoId ? newValue : item)));
+  };
+
+  const removeTodo = id => {
+    const removedArr = [...todos].filter(todo => todo.id !== id);
+
+    setTodos(removedArr);
+  };
+
+  const completeTodo = id => {
+    let updatedTodos = todos.map(todo => {
+      if (todo.id === id) {
+        todo.isComplete = !todo.isComplete;
+      }
+      return todo;
+    });
+    setTodos(updatedTodos);
+  };
+
+  return (
     <>
-      {toDo && toDo
-      .sort((a, b) => a.id > b.id ? 1 : -1)
-      .map( (task, index) => {
-        return(
-          <React.Fragment key={task.id}>
-            <div className="col taskBg">
-              <div className={ task.status ? 'done' : '' }>
-                <span className="taskNumber">{index + 1}</span>
-                <span className="taskText">{task.title}</span>
-              </div>
-              <div className="iconsWrap">
-                <span title="Completed / Not Completed"
-                  onClick={ (e) => markDone(task.id) }
-                >
-                  <FontAwesomeIcon icon={faCircleCheck} />
-                </span>
-
-                {task.status ? null : (
-                  <span title="Edit"
-                    onClick={ () => setUpdateData({ 
-                      id: task.id, 
-                      title: task.title, 
-                      status: task.status ? true : false
-                    }) }
-                  >
-                    <FontAwesomeIcon icon={faPen} />
-                  </span>
-                )}
-
-                <span title="Delete"
-                  onClick={() => deleteTask(task.id)}
-                >
-                  <FontAwesomeIcon icon={faTrashCan} />
-                </span>
-              </div>
-            </div>
-          </React.Fragment>
-        )
-      })
-      }  
+      <h1>What's the Plan for Today?</h1>
+      <TodoForm onSubmit={addTodo} />
+      <Todo
+        todos={todos}
+        completeTodo={completeTodo}
+        removeTodo={removeTodo}
+        updateTodo={updateTodo}
+      />
     </>
-  )
+  );
 }
 
-export default ToDo;
+export default TodoList;
